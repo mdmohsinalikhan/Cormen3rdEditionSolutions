@@ -1,0 +1,277 @@
+\documentclass{article}
+\usepackage{algpseudocode} 
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{amsthm}
+\usepackage{mathtools}
+
+\usepackage[usenames, dvipsnames]{color}
+
+
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+
+\begin{document}
+
+\title{Introduction to Algorithms\\CLRS\\3rd Edition}
+\author{Md. Mohsin Ali Khan}
+
+\maketitle
+\section*{5 Probabilistic Analysis and Randomized Algorithms}
+\subsection*{5.2 Indicator random variables}
+\begin{enumerate}
+\item[5.2-1] \textcolor{blue}{In HIRE -ASSISTANT, assuming that the candidates are presented in a random order, what is the probability that you hire exactly one time? What is the probability that you hire exactly $n$ times?}
+\textbf{Solution:} Exactly one time is $\frac{(n-1)!}{n!}=\frac{1}{n}$ and exatly $n$ times is $\frac{1}{n!}$
+\item[5.2-2] \textcolor{blue}{In HIRE -A SSISTANT , assuming that the candidates are presented in a random order, what is the probability that you hire exactly twice?}
+\textbf{Solution:} Let $i$ be the index where the best candidate comes in for the interview. Then there are $x = \sum_{i=2}^{n}\binom{n-1}{i-1}(i-2)!(n-i)!$ ways the candidates can be permuted so that exactly $2$ candidates are hired. And there are total $n!$ possible ways that the candidates can be permuted for the interview. So, the probability in question is 
+\begin{eqnarray*}
+p &=& \frac{x}{n!}\\
+&=& \frac{\sum_{i=2}^{n}\binom{n-1}{i-1}(i-2)!(n-i!)}{n!}\\
+&=& \sum_{i=2}^{n}\frac{(n-1)!(i-2)!(n-i)!}{(n-1-i+1)!(i-1)!n!}\\
+&=& \sum_{i=2}^{n}\frac{(n-1)!(i-2)!}{(i-1)!n!}\\
+&=& \sum_{i=2}^{n}\frac{1}{(i-1)n}\\
+&=& \frac{1}{n}\left(1+\frac{1}{2}+ \cdots \frac{1}{n-1}\right)\\
+&\leq& \frac{1}{n}\ln(n-1) + 1
+\end{eqnarray*}
+
+\item[5.2-3] \textcolor{blue}{Use indicator random variables to compute the expected value of the sum of n dice.}
+\textbf{Solution:}Let us consider random variables $D_{(i,j)}$ which take values $1$ when the outcome of the $i$-th dice is $j$ and $0$ otherwise. Let $n_j$ is the number of dices that produces outcome $j$. Then we have $n_j =\sum_{i=1}^{n}D_{(i,j)}$. Let $X$ be the sum of the outcome of the dices. Then
+\begin{eqnarray*}
+X &=& \sum_{j=1}^{6} j \cdot n_j\\
+&=& \sum_{j=1}^{6} j \cdot \sum_{i=1}^{n}D_{(i,j)}\\
+E[X] &=& E\left[\sum_{j=1}^{6} j \cdot\sum_{i=1}^{n}D_{(i,j)}\right]\\
+&=& \sum_{j=1}^{6} E\left[j \cdot \sum_{i=1}^{n}D_{(i,j)}\right]\\
+&=& \sum_{j=1}^{6} j \cdot E\left[\sum_{i=1}^{n}D_{(i,j)}\right]\\
+&=& \sum_{j=1}^{6} j \sum_{i=1}^{n}E\left[D_{(i,j)}\right]\\
+&=& \sum_{j=1}^{6} j \sum_{i=1}^{n}Pr(D_{(i,j)}=1) \cdot 1 + Pr(D_{(i,j)}=0) \cdot 0\\
+&=& \sum_{j=1}^{6} j \sum_{i=1}^{n}Pr(D_{(i,j)}=1)\\
+&=& \sum_{j=1}^{6} j \sum_{i=1}^{n}\frac{1}{6}\\
+&=& \sum_{j=1}^{6} j \cdot \frac{n}{6} \\
+&=& \frac{n}{6} \sum_{j=1}^{6} j \\
+&=& \frac{n}{6} \cdot \frac{6(6+1)}{2}\\
+&=& \frac{7}{2}n \\
+\end{eqnarray*}
+
+
+\item[5.2-3] \textcolor{blue}{Use indicator random variables to solve the following problem, which is known as the hat-check problem. Each of $n$ customers gives a hat to a hat-check person at a restaurant. The hat-check person gives the hats back to the customers in a random
+order. What is the expected number of customers who get back their own hat?}
+\textbf{Solution:} Let $C_{i}$ be the indicator random variables which take values $1$ if the $i$-th customer gets his cap back and $0$ otherwise. We claim that the probability, $Pr(C_i = 1) = \frac{1}{n}$. This is because the probability that the $i$-th customer has picked up his cap is the probability that none of the customers before the $i$-th customer has taken the $i$-th cusomer's cap and the $i$-th customer has taken his own cap. This probability $p$ can be expressed in the following form
+\begin{eqnarray*}
+p &=& \left(1-\frac{1}{n}\right)\left(1-\frac{1}{n-1}\right)\cdots \left(1-\frac{1}{n-i+2}\right)\left(\frac{1}{n-i+1}\right)\\
+&=& \left(\frac{n-1}{n}\right)\left(\frac{n-2}{n-1}\right)\cdots \left(\frac{n-i+1}{n-i+2}\right)\left(\frac{1}{n-i+1}\right)\\
+&=& \frac{1}{n}
+\end{eqnarray*}Let $X$ be the total number of custoemrs who get back their caps. Then we have
+\begin{eqnarray*}
+X &=& \sum_{i=1}^{n}C_i\\
+E\left[X\right] &=& E[\sum_{i=1}^{n}C_i]\\
+&=& \sum_{i=1}^{n}E\left[ C_i \right]\\
+&=& \sum_{i=1}^{n}Pr(C_i=1) \cdot 1 + Pr(C_i=0) \cdot 0\\
+&=& \sum_{i=1}^{n}Pr(C_i=1)\\
+&=& \sum_{i=1}^{n}\frac{1}{n}\\
+&=& 1
+\end{eqnarray*}
+
+
+\item[5.2-4] \textcolor{blue}{Let $A\left[1 \cdots n\right]$. be an array of $n$ distinct numbers. If $i < j$ and $A\left[i\right] > A\left[j\right]$, then the pair $\left(i,j\right)$ is called an inversion of $A$. (See Problem $2-4$ for more on inversions.) Suppose that the elements of $A$ form a uniform random permutation of $\langle 1, 2, \cdots ,n\rangle$. Use indicator random variables to compute the expected number of inversions.}
+\textbf{Solution:} We can obtain $2\binom{n}{2}$ number of pairs from a set of size $n$. Observe that for every pair of elements $a$ and $b$ there are two distinct pairs $(a,b)$ and $(b,a)$. As every element in the set is a distinct number and numbers form a total order, for exactly one of these pairs the first element is bigger than the second element. Which means, if you choose arbitrarily any pair of elments in the given array, the first elment being bigger than the second element is exactly $\frac{1}{2}$. \\
+
+For all $i < j$, let, $I_{(i,j)}$ be the indicator random variables which take value $1$ when the pair $(i,j)$ is an inversion of $A$. They take the value $0$ otherwise. Let $X$ be the total number of inversions of $A$. Then we have 
+\begin{eqnarray*}
+X &=& \sum_{i=1}^{n-1}\sum_{j= i + 1}^{n} I_{(i,j)}\\
+E[X] &=& E\left[\sum_{i=1}^{n-1}\sum_{j= i + 1}^{n} I_{(i,j)}\right]\\
+&=& \sum_{i=1}^{n-1}E\left[\sum_{j= i + 1}^{n} I_{(i,j)}\right]\\
+&=& \sum_{i=1}^{n-1}\sum_{j= i + 1}^{n} E\left[ I_{(i,j)}\right]\\
+&=& \sum_{i=1}^{n-1}\sum_{j= i + 1}^{n} Pr(I_{(i,j)}=1) \cdot 1 + Pr(I_{(i,j)}=0) \cdot 0\\
+&=& \sum_{i=1}^{n-1}\sum_{j= i + 1}^{n}Pr(I_{(i,j)}=1)\\
+&=& \sum_{i=1}^{n-1}\sum_{j= i + 1}^{n}\frac{1}{2}\\
+&=& \sum_{i=1}^{n-1} \frac{(n-j+1)}{2}\\
+&=& \sum_{i=1}^{n-1} \frac{(n+1)}{2} - \sum_{i=1}^{n-1} \frac{j}{2}\\
+&=& \frac{(n-1)(n+1)}{2} - \frac{1}{2} \cdot \frac{(n-1)n}{2} \\
+&=& \frac{(n-1)(n+1)}{2} - \frac{(n-1)n}{4} \\
+&=& \frac{2(n-1)(n+1)-n(n-1)}{4}\\
+&=& \frac{(n-1)(2n+2-n)}{4}\\
+&=& \frac{(n-1)(n+2)}{4}\\
+\end{eqnarray*}
+
+\end{enumerate}
+
+
+
+\section*{5 Probabilistic Analysis and Randomized Algorithms}
+\subsection*{5.4 Probabilistic analysis and further uses of indicator random variables}
+\begin{enumerate}
+\item[5.4-1] \textcolor{blue}{How many people must there be in a room before the probability that someone has the same birthday as you do is at least $1/2$? How many people must there be before the probability that at least two people have a birthdays on July 4 is greater than $1/2$?}\textbf{Solution:} The number of people required to find the first person who has the same same birthday as mine is geometrically distributed where the success probability is is $p=1/365$. Let's assume that the probability in question will be at least $1/2$ when the number of people become $n$. Then the cumulative mass function of geometric distribution outputs at least $1/2$ when $k$ and $p$ are plugged in it. The pmf is $F(n|p) = 1-(1-p)^k \geq 1/2$. So, we set
+\begin{eqnarray*}
+1-(1-p)^n &\geq& 1/2\\
+(1-p)^n &\leq& 1/2
+\end{eqnarray*}
+Taking logarithm on both side we have 
+\begin{eqnarray*}
+\log(1-p)^n &\leq& \log 2^{-1}\\
+n\log(1-p) &\leq& -1\\
+n &\geq& \frac{-1}{\log(1-p)} \text{   (as log(1-p) is less than zero)}\\
+n &\geq& \frac{-1}{\log(1-1/365)}\\
+n &\geq& \frac{-1}{\log(364/365)}\\
+n &\geq& \frac{-1}{-.003958}\\
+n &\geq& 253\\
+\end{eqnarray*}
+So, including me there shall be 254 people. 
+The other part of the problem can be solved using binomial distribution. The number of people who have birthdays on July 4 are binomially distributed. Lets say we need $n$ many people in the room to have the probability in question to be at least $1/2$. Which means the cumulative mass function of binomial distribution $F$ will output less that $1/2$ for the value $k=1$ when the success probability $p$ and $n$ are plugged in it. So we have  
+\begin{eqnarray*}
+F(k=1|p,n) &\leq& 1/2\\
+\sum_{i=0}\binom{n}{i}p^i(1-p)^{n-i} &\leq& 1/2\\
+\binom{n}{0}p^0(1-p)^{n} + \binom{n}{1}p(1-p)^{n-1} &\leq& 1/2 \\
+(1-p)^{n} + np(1-p) &\leq& 1/2\\
+(364/365)^n + \frac{n}{365}(364/365)^{n-1} &\leq& 1/2\\
+\end{eqnarray*}
+Maybe now run a program to compute the smallest value of $n$ so that 
+\item[5.4-2] \textcolor{blue}{Suppose that we toss balls into $b$ bins until some bin contains two balls. Each toss is independent, and each ball is equally likely to end up in any bin. What is the expected number of ball tosses?}
+\textbf{Solution:} Let $X_i$ be a random variable that takes value $1$ if all the ball toss before $i$-th toss and also the $i$-th toss fails to get at least two balls in one bin. $X_i$ takes value $0$ otherwise. Let $X$ be the number of toss required to get the first bin that receives two balls. Then 
+\begin{eqnarray*}
+X &=& 1 + X_1 + \cdots + X_b \\
+E[X] &=& E[1 + X_1 + \cdots + X_b] \\
+&=& 1 + E[X_1] + \cdots + [X_b]\\
+&=& 1 + \sum_{i=1}^{b}E[X_i]\\
+&=& 1 + \sum_{i=1}^{b}P(X_i = 1)\cdot1 + P(X_i = 0)\cdot0\\
+&=& 1 + \sum_{i=1}^{b}P(X_i = 1)\\
+&=& 1 + \sum_{i=1}^{b}\frac{b(b-1) \cdots (b-i+1)}{b^i}\\
+&=& 1 + \sum_{i=1}^{b}\frac{b!}{(b-i)!b^i}
+\end{eqnarray*}
+\item[5.4-3] \textcolor{blue}{For the analysis of the birthday paradox, is it important that the birthdays be mutu-ally independent, or is pairwise independence sufficient? Justify your answer.}
+\textbf{Solution:} They has to be mutually independent. Because When there are three persons in the room, the fact that the first two persons have certain birthday doesn't impact the third person to be biased to take a certain birthday. The third person still uniformly likely to take any of the possible $365$ birth days. And the analysis considers this fact when it argues that the third person would have 363 possible birth days so that it doesn't have the same birth day with any of the first two. And in the analysis this probability is comupted as $\frac{1}{365}\cdot 363$. That is, it considers the identical and uniform probability for each possible birth day. The same arugement applies for all the subsequent persons.
+\item[5.4-4] \textcolor{blue}{How many people should be invited to a party in order to make it likely that there are three people with the same birthday?}
+\textbf{Solution:} Let us consider Indicator random variables $I_{(i,j,k)}$ such that they take values $1$ when the persons $i,j$ and $k$ have the same birthdays. Otherwise they take values $0$. Let us assume that the total number of $3$-subsets that have the same birthdays is $X$. Then 
+\begin{eqnarray*}
+X &=& \sum_{i,j,k}I_{(i,j,k)}\\
+E\left[X\right] &=& E\left[\sum_{i,j,k}I_{(i,j,k)}\right]\\
+&=& \sum_{i,j,k}E\left[I_{(i,j,k)}\right]\\
+&=& \sum_{i,j,k}Pr(I_{(i,j,k)}=1)\cdot 1 + Pr(I_{(i,j,k)}=0)\cdot 0 \\ 
+&=& \sum_{i,j,k}Pr(I_{(i,j,k)}=1)\\
+&=& \sum_{i,j,k}\binom{m}{3}\frac{1}{365^3}\cdot365\\
+&=& \sum_{i,j,k}\binom{m}{3}\frac{1}{365^2}\\
+& & \text{($m$ is total number of people present in the room)}\\
+&=& \frac{m(m-1)(m-2)}{6}\cdot\frac{1}{365^2}
+\end{eqnarray*}
+Now if we set $E\left[X\right] = 1$ then we have $\frac{m(m-1)(m-2)}{6}\cdot\frac{1}{365^2} = 1$
+Using wolphram alpha, I get $m = 93.810 \approx 94$
+
+
+\item[5.4-6] \textcolor{blue}{Suppose that $n$ balls are tossed into $n$ bins, where each toss is independent and the ball is equally likely to end up in any bin. What is the expected number of empty bins? What is the expected number of bins with exactly one ball?}
+\textbf{Solution:} Let us consider the indicator random variables $B_i$ which take value $1$ if the bin $i$ is empty after tossing all the balls and $0$  otherwise. And let $X$ be the number of empty bins after tossing all the balls. Then we have
+\begin{eqnarray*}
+X &=& \sum_{i=1}{n} B_i\\
+E\left[X\right] &=& E\left[\sum_{i=1}^{n} B_i \right]\\
+&=& \sum_{i=1}^{n}E\left[ B_i \right]\\
+&=& \sum_{i=1}^{n}Pr(B_i = 1)\cdot 1 + Pr(B_i = 0)\cdot 0\\
+&=& \sum_{i=1}^{n}Pr(B_i = 1)\\
+&=& \sum_{i=1}^{n}\left(\frac{n-1}{n}\right)^n\\
+&=& n\left(\frac{n-1}{n}\right)^n\\
+&=& \frac{\left(n-1\right)^n}{n^{n-1}}\\
+\end{eqnarray*}
+
+\textbf{Solution of the other part:}Let us consider the indicator random variables $B_i$ which take value $1$ if the bin $i$ has exactly one ball after tossing all the balls and $0$  otherwise. And let $X$ be the number of bins with exactly one ball after tossing all the balls. Then we have
+\begin{eqnarray*}
+X &=& \sum_{i=1}{n} B_i\\
+E\left[X\right] &=& E\left[\sum_{i=1}^{n} B_i \right]\\
+&=& \sum_{i=1}^{n}E\left[ B_i \right]\\
+&=& \sum_{i=1}^{n}Pr(B_i = 1)\cdot 1 + Pr(B_i = 0)\cdot 0\\
+&=& \sum_{i=1}^{n}Pr(B_i = 1)\\
+&=& \sum_{i=1}^{n}\binom{n}{1}\left(\frac{1}{n}\right)^1\left(1-\frac{1}{n}\right)^{n-1}\\
+&=& \sum_{i=1}^{n}n\cdot \frac{1}{n} \cdot \left(\frac{n-1}{n}\right)^{n-1}\\
+&=& \sum_{i=1}^{n}\left(\frac{n-1}{n}\right)^{n-1}\\
+&=& n \left(\frac{n-1}{n}\right)^{n-1}\\
+&=& \frac{\left(n-1\right)^{n-1}}{n^{n-2}}\\
+\end{eqnarray*}
+\end{enumerate}
+
+\section*{6 Heapsort}
+\subsection*{6.1 Heaps}
+\begin{enumerate}
+    \item[6.1-1] \textcolor{blue}{What are the minimum and maximum numbers of elements in a heap of height $h$?}
+    \textbf{Solution:} We claim that a full binary tree of height $h$ has $2^h$ leaves.
+    Let's show the claim by induction. Base case $h=0$ is immediate. Let's assume it is true for $h$. The tree with height $h+1$ will have $2\times 2^h = 2^{h+1}$ leaves. So, it is true for $h+1$. Consequently the claim is true.
+    
+    The maximum number of elements in a heap of height $h$ is the total number of elements in a full binary tree of height $h$. The total number of elements $m$ in a full binary tree is the sum of number of leaves in full binary trees of heights $h \in \left\lbrace 0, 1, \cdots ,h\right\rbrace$. So,
+    
+    \begin{eqnarray*}
+    m &=& 2^0 + 2^1 + \cdots + 2^h\\
+    &=& 2^{h+1} - 1
+    \end{eqnarray*}
+    
+    
+    
+    And the minimum number of elements in a heap of height $h$ is the total number of elements in a heap of height $h-1$ plus $1$. Which is $2^{h-1+1}-1+1 = 2^h$
+    
+    
+    \item[6.1-2] \textcolor{blue}{Show that an $n$-element heap has height $\floor{\log_2 n}$ }
+    \textbf{\\Solution 1:} Let $h$ be the height of the heap. From the first problem of this section we know 
+    \begin{eqnarray*}
+    2^{h} \leq &n& < 2^{h+1}\\
+    \log_2 2^{h}\leq &\log_2(n + 1)& < \log_2 2^{h+1}\\
+    h\leq &\log_2n& < h+1
+    \end{eqnarray*}
+    As $h$ is an integer, we have $\floor{\log_2 n} = h \hfill \square$
+    
+    \textbf{\\Solution 2:} Let us consider a function $h: \mathbb{N} \rightarrow \mathbb{N}_0$ that takes the number of elements of a heap as input and outputs the height of the heap. \\ We show the claim in question is true by induction.
+    
+    \begin{enumerate}
+    
+    \item The base case is $n = 1$. The hight of the heap with $1$ element is is $\floor{\log_2 1} = 0$. Which satisfy the base case because when there is only one element in the heap, the height of the heap is $0$. 
+    \item Let us assume that the claim is true for $n$. That is $h(n) = \floor{\log_2 n }$. 
+    \item We now show that the claim is also true for $n+1$. That is $h(n+1) = \floor{\log_2 (n+1) }$. As a heap is a complete binary tree, we can write $h(n+1) = h(n) + a$ where $a$ is the increase of the height of the heap because of the additional one element. There are two cases to consider now. One is the case in which the heap is a full binary tree and in the other, it is not full.
+    \begin{enumerate}
+    \item[\textcolor{blue}{Full:}]
+    If the heap with $n$ element is a full binary tree, that means the heap contains the maximum number of elements possible with its current height. So, $a = 1$ and we have, 
+    \begin{eqnarray}
+    h(n+1) &=& h(n) + a = \floor{\log_2 n} + 1 \label{eqn:heap_full_tree_case}
+    \end{eqnarray}
+    Observe that when the heap is a full binary tree, we have
+    \begin{eqnarray*}
+    n &=& 2^{\floor{\log_2 n}+1}-1\\
+    n + 1 &=& 2^{\floor{\log_2 n}+1}\\
+    \log_2(n + 1) &=& \log_2 2^{\floor{\log_2 n}+1}\\
+    \log_2(n + 1) &=& \floor{\log_2 n}+1\\
+    \floor{\log_2(n + 1)} &=& h(n+1) \text{[Using equation \ref{eqn:heap_full_tree_case}]}\\
+    h(n+1) &=& \floor{\log_2(n + 1)} 
+    \end{eqnarray*}
+    \item[\textcolor{blue}{Not full:}]Now consider the case when the heap is not a full binary tree. In this case $a = 0$. So we have 
+    \begin{eqnarray}
+    h(n+1) &=& h(n) + a = \floor{\log_2 n} \label{eqn:heap_not_full_tree_case}
+    \end{eqnarray}
+    Observe that when the heap is not a full binary tree, we have
+    \begin{eqnarray*}
+    2^{\floor{\log_2 n}} \leq &n& < 2^{\floor{\log_2 n}+1}-1\\
+    2^{\floor{\log_2 n}}\leq &n + 1& < 2^{\floor{\log_2 n}+1}\\
+    \log_2 2^{\floor{\log_2 n}}\leq &\log_2(n + 1)& < \log_2 2^{\floor{\log_2 n}+1}\\
+    {\floor{\log_2 n}}\leq &\log_2(n + 1)& < \floor{\log_2 n}+1
+    \end{eqnarray*}
+    It is immediate to observe from the last inequalities that $\floor{\log_2(n)} = \floor{\log_2(n + 1)}$. Using this equality in equation \ref{eqn:heap_not_full_tree_case}, we have $h(n+1) = \floor{\log_2 (n+1)} \hfill \square$
+    \end{enumerate}
+    \end{enumerate}
+    
+    \item[6.1-3] \textcolor{blue}{Show that in any subtree of a max-heap, the root of the subtree contains the largest value occurring anywhere in that subtree.}
+    \textbf{Solution:} We show the claim by induction. All the children of the root have smaller or equal values than that of the root by the heap property of max-heap. So, the base case when the height of the subtree is $1$ is true. We assume that the claim is true when the height of the subtree is $h$. Then the value of every leaf of the subtree of height $h+1$ is smaller than it's parent. And the parent is a leaf of the subtree of length $h$, which is smaller than the root by induction hypothesis. As a result, by the transitivity of of the order relation (we assume the order relation is transitive), every leaf of the subtree of length $h+1$ is smaller or equal than the root. Consequently the claim in question is true. $\hfill \square$
+    
+    \item[6.1-4] \textcolor{blue}{Where in a max-heap might the smallest element reside, assuming that all elements are distinct?}
+    \textbf{Solution:} The smallest element will be one of the leaves of the underlying complete binary tree of the heap.
+    
+    \item[6.1-6] \textcolor{blue}{Is an array that is in sorted order a min-heap?}
+    \textbf{Solution:} Yes, because in the underlying binary tree, the children of a parent node are elements which are on the right side of the corresponding element of the parent node in the array. As the array is sorted, any element is smaller or equal than any other elements on its right. Consequently, the value of any node in the tree is smaller than that of any children. 
+    
+    \item[6.1-6] \textcolor{blue}{Is the array with values $\left\langle 23, 17, 14, 6, 13, 10, 1, 5, 7
+,12 \right\rangle$ is a max-heap??}
+    \textbf{Solution:} No, because in the underlying binary tree, $7$ becomes a child of $6$. But in max heap the value stored in a node must be greater or equal than the values of both of the left and right children individually.
+    
+    
+    \item[6.1-7] \textcolor{blue}{Show that, with the array representation for storing an n-element heap, the leaves are the nodes indexed by $\floor{\frac{n}{2}} + 1, \floor{\frac{n}{2}} + 2, \cdots ,n$}
+    \textbf{Solution:} We know the element in the array at index $i$ has a left child at position $2i$ and right child at index $2i+1$. Observe that any element at index less or equal to $\floor{\frac{n}{2}}$ surely has a left child because $2 \floor{\frac{n}{2}} \leq n$. So any element in the array at index less or equal to  $\floor{\frac{n}{2}}$ can't be a leaf. On the other hand every element greater than  $\floor{\frac{n}{2}}$ can't have either left or right child because $2 (\floor{\frac{n}{2}} + 1) > n$ and also $2 (\floor{\frac{n}{2}} + 1) + 1 > n$. As a result all the elements in the array at indices mentioned in the question are leaves of the heap and there are no other leaves.
+\end{enumerate}
+%\section{References}
+%[1] https://proofwiki.org/wiki/Expectation\_of\_Binomial\_Distribution \newline\newline
+\end{document}
+
